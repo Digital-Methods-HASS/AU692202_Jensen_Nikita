@@ -1,0 +1,65 @@
+---
+title: "Homework W39 Visualization"
+author: "Nikita Jensen"
+date: "2023-10-02"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+# Exercise 1
+
+Visualize the duration of reign among Danish kings through time (showing the diachronic trend from ca 900 - today on the x axis) with ggplot. Use the dataset you/your group has created and submit both the script and the visualisation, ideally as part of an rmarkdown and html document (for details see bottom of this page). Experiment with geom_point(), geom_line() or geom_smooth() functions for the geometry.
+
+
+## Packages
+
+```{r}
+
+library(tidyverse)
+library(ggplot2)
+
+```
+
+## Read Data
+
+```{r}
+Kings_Reign <- read_csv2("data/Kings.csv")
+view(Kings_Reign)
+head(Kings_Reign)
+
+```
+
+## Make pipe to make visualization
+
+```{r}
+
+Kings_Reign %>% 
+  select(Name, Start_Reign, End_Reign) %>% 
+  mutate(Reign = End_Reign - Start_Reign) %>% 
+  mutate(Name = reorder(Name, Reign)) %>% 
+  ggplot(aes(x = Reign, y = Name, fill = Reign))+
+  geom_col()+
+  theme_bw()+
+  labs(title = "Duration of Reign", x = "Reign in Years", y = "Monarch")
+
+```
+
+
+
+
+I tried to do geom_point, geom_line, geom_smooth. I think geom_col looks best. Not sure whats going on with Christoffer?
+
+## How to save your ggplot as a picture
+
+```{r}
+
+ggsave("figures/Kings_Reign_Picture.png")
+
+```
