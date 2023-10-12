@@ -1,0 +1,254 @@
+---
+title: "Leaflet Exercise"
+author: "Nikita Jensen"
+date: "Created by Adela Sobotkova, updated by Nikita `r format(Sys.time(), '%d %B %Y')`"
+output: 
+html_document:
+  toc: true
+  toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# GETTING STARTED WITH LEAFLET
+
+Try to work through down this script, observing what happens in the plotting pane.
+
+Review favorite backgrounds in:
+https://leaflet-extras.github.io/leaflet-providers/preview/
+beware that some need extra options specified
+
+## Install packages
+To install Leaflet package, run this command at your R prompt:
+I have CommandOut the packages so I could knit a RMarkdown.
+```{r}
+#install.packages("leaflet")
+```
+
+## We will also need this widget to make pretty maps:
+```{r}
+#install.packages("htmlwidget")
+```
+
+## Activate the libraries
+```{r}
+library(leaflet)
+library(htmlwidgets)
+library(tidyverse)
+```
+
+# MY TASK NUMBER ONE
+
+# Task 1: Create a Danish equivalent of AUSmap with esri layers, but call it DANmap
+
+## Libraries
+```{r}
+library(leaflet)
+library(htmlwidgets)
+library(tidyverse)
+```
+
+## Creating labels for my points
+```{r}
+popup2 = c( "Copenhagen", "Odense", "Aarhus")
+```
+
+## Creating a Leaflet Map
+```{r}
+leaflet() %>%                                 # create a map widget by calling the library
+  addProviderTiles("Esri.WorldPhysical") %>%   # add Esri World Physical map tiles
+  addAwesomeMarkers(lng = c(12.57, 10.4, 10.21),      # add layers, specified with longitude for 3 points
+                    lat = c(55.68, 55.4, 56.16),      # and latitude for 3 points
+                    popup = popup2)            # specify labels, which will appear if you click on the point in the map
+```
+
+## Looking at Aarhus with setview
+```{r}
+leaflet() %>%
+  addTiles() %>%                              # add default OpenStreetMap map tiles
+  addProviderTiles("Esri.WorldImagery",       # add custom Esri World Physical map tiles
+                   options = providerTileOptions(opacity=0.5)) %>%     # make the Esri tile transparent
+  setView(lng = 10.21076, lat = 56.15674, zoom = 10)              # set the location of the map 
+```
+
+
+## Adding layers
+```{r}
+leaflet() %>% 
+  addTiles() %>% 
+  setView( lng = 10.21, lat = 56.16, zoom = 5 ) %>%  # let's use setView to navigate to our area
+  addProviderTiles("Esri.WorldPhysical", group = "Physical") %>% 
+  addProviderTiles("Esri.WorldImagery", group = "Aerial") %>% 
+  addProviderTiles("MtbMap", group = "Geo") %>% 
+  
+  addLayersControl(                                 # we are adding layers control to the maps
+    baseGroups = c("Geo","Aerial", "Physical"),
+    options = layersControlOptions(collapsed = T))
+
+```
+
+# Check area
+```{r}
+leaflet() %>% 
+  setView(10.21076, 56.15674, zoom = 13) %>%
+  addTiles()  # checking I am in the right area
+```
+
+## Base location
+```{r}
+l_dk <- leaflet() %>%   # assign the base location to an object
+  setView(10.21076, 56.15674, zoom = 13)
+```
+
+## Choosing Esri background layers
+```{r}
+esri <- grep("^Esri", providers, value = TRUE)
+
+for (provider in esri) {
+  l_dk <- l_dk %>% addProviderTiles(provider, group = provider)
+}
+```
+
+# Creating the map
+```{r}
+DANmap <- l_dk %>%
+  addLayersControl(baseGroups = names(esri),
+                   options = layersControlOptions(collapsed = FALSE)) %>%
+  addMiniMap(tiles = esri[[1]], toggleDisplay = TRUE,
+             position = "bottomright") %>%
+  addMeasure(
+    position = "bottomleft",
+    primaryLengthUnit = "meters",
+    primaryAreaUnit = "sqmeters",
+    activeColor = "#3D535D",
+    completedColor = "#7D4479") %>% 
+  htmlwidgets::onRender("
+                        function(el, x) {
+                        var myMap = this;
+                        myMap.on('baselayerchange',
+                        function (e) {
+                        myMap.minimap.changeLayer(L.tileLayer.provider(e.name));
+                        })
+                        }") %>% 
+  addControl("", position = "topright")
+
+DANmap
+```
+
+## ADD DATA TO LEAFLET
+
+In this section you will manually create machine-readable spatial data from GoogleMaps: 
+
+### First, go to https://bit.ly/CreateCoordinates1
+Enter the coordinates of your favorite leisure places in Denmark 
+extracting them from the URL in googlemaps, adding name and type of monument.
+Remember to copy the coordinates as a string, as just two decimal numbers separated by comma. 
+
+*Caveats: Do NOT edit the grey columns! They populate automatically!*
+
+### Second, read the sheet into R. You will need gmail login information. 
+watch the console, it may ask you to authenticate or put in the number that corresponds to the account you wish to use.
+
+## Libraries
+```{r}
+library(tidyverse)
+library(googlesheets4)
+library(leaflet)
+```
+
+## Read in a Googlesheet
+*If et dosent work use gs4_deauth() *
+```{r}
+gs4_deauth() 
+
+places <- read_sheet("https://docs.google.com/spreadsheets/d/1PlxsPElZML8LZKyXbqdAYeQCDIvDps2McZx1cTVWSzI/edit#gid=124710918",
+                     range = "DigitalMethods",
+                     col_types = "cccnncnc")
+glimpse(places)
+```
+
+## Load the coordinates in the map and check:
+```{r}
+leaflet() %>% 
+  addTiles() %>% 
+  addMarkers(lng = places$Longitude, 
+             lat = places$Latitude,
+             popup = places$Description)
+
+leaflet() %>%
+  addTiles() %>%                              # add default OpenStreetMap map tiles
+  addProviderTiles("Esri.WorldImagery",       # add custom Esri World Physical map tiles
+                   options = providerTileOptions(opacity=0.5)) %>%     # make the Esri tile transparent
+  setView(lng = 10.21076, lat = 56.15674, zoom = 10)              # set the location of the map 
+```
+
+# Task 2: Read in the googlesheet data you and your colleagues populated with data into the DANmap object you created in Task 1.
+
+## Libraries
+```{r}
+library(tidyverse)
+library(googlesheets4)
+library(leaflet)
+```
+
+## Read in a Google sheet
+*If et dosent work use gs4_deauth()* 
+```{r}
+places <- read_sheet("https://docs.google.com/spreadsheets/d/1PlxsPElZML8LZKyXbqdAYeQCDIvDps2McZx1cTVWSzI/edit#gid=124710918",
+                     range = "DigitalMethods",
+                     col_types = "cccnncnc")
+glimpse(places)
+```
+
+## Load the coordinates in the map and check: are any points missing? Why?
+```{r}
+DANmap %>% 
+  addMarkers(lng = places$Longitude, 
+             lat = places$Latitude,
+             popup = places$Description,
+             clusterOptions = markerClusterOptions())
+
+leaflet() %>%
+  addTiles() %>%                              # add default OpenStreetMap map tiles
+  addProviderTiles("Esri.WorldImagery",       # add custom Esri World Physical map tiles
+                   options = providerTileOptions(opacity=0.5)) %>%     # make the Esri tile transparent
+  setView(lng = 10.21076, lat = 56.15674, zoom = 10)              # set the location of the map 
+```
+
+# Task 3: Can you cluster the points in Leaflet? Google "clustering options in Leaflet"
+
+Yes. See solution below.
+
+```{r}
+DANmap %>% 
+  addMarkers(lng = places$Longitude, 
+             lat = places$Latitude,
+             popup = places$Description,
+             clusterOptions = markerClusterOptions())
+```
+
+# Task 4: Look at the map and consider what it is good for and what not.
+
+Maps created in RStudio are a valuable tool for visualizing and analyzing data, offering interactivity, customization, and the ability to convey complex information in a visually engaging way. Like in this map. The map gives a good overview of danish cities, in my example especially Aarhus. The clusterOptions in RStudio's Leaflet package is a valuable tool for customizing the appearance and behavior of marker clusters in your interactive maps. It is particularly useful for creating visually appealing maps with the ability to fine-tune cluster behavior.
+
+# Task 5: Find out how to display notes and classifications in the map.
+
+## Classification and notes
+```{r}
+DANmap %>%
+  leaflet() %>%
+  addTiles() %>%
+  addCircleMarkers(lng = places$Longitude, 
+                   lat = places$Latitude,
+                   weight = 2,
+                   color = "blue",
+                   radius = places$Stars1_5*2,
+                   label = places$Placename,
+                   popup = paste("Name:", places$Placename, 
+                                 "<br>Coordinates:", places$Longitude,",",places$Latitude,
+                                 "<br>Type:", places$Type,
+                                 "<br>Description:", places$Description,
+                                 "<br>Stars:", places$Stars1_5))
+```
