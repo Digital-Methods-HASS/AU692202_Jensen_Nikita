@@ -1,0 +1,367 @@
+---
+title: "The Cold War and Nuclear Weapons"
+author: "Nikita Cecilie Jensen"
+date: "Created by Nikita Cecilie Jensen 14 October 2023 updated `r format(Sys.time(), '%d %B %Y')`"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# The Cold War and Nuclear Weapons introduction:
+
+This project is based on the data sources provided by [OurWorldInData project]: https://ourworldindata.org/nuclear-weapons. 
+
+Cited: Max Roser, Bastian Herre and Joe Hasell (2013) - "Nuclear Weapons". Published online at OurWorldInData.org. Retrieved from: 'https://ourworldindata.org/nuclear-weapons' [Online Resource].
+
+**Nuclear Weapons Status data:**
+I have used a data source (Nuclear Weapons Status) from Our World in Data to research the proliferation of nuclear weapons.
+
+Here is a more specific link to where I found it: https://ourworldindata.org/nuclear-weapons#nuclear-powers-and-proliferation. See this for more information about the data on nuclear weapon proliferation. The information includes that the data source is based on Bleek (2017) and Nuclear Threat Initiative (2022). Under sources it is described that the data is published by Our World in Data, Bastian Herre. 
+
+Link to Bastians Herre’s Github:
+https://github.com/owid/notebooks/tree/main/BastianHerre/nuclear_weapons/OWID%20based%20on%20Bleek%20(2017)%2C%20Nuclear%20Threat%20Initiative%20(2022)%20nuclear%20weapons%20proliferation
+
+**Nuclear Weapons Testing data:**
+The other data source (Nuclear Weapons Testing) used in this study is also provided by Our World In Data: https://ourworldindata.org/nuclear-weapons#nuclear-weapons-tests. This link provides more information specified about the data. This data source provides the number of nuclear weapons testing by country. The data is published by Arms Control Association. Here is a more specific link: https://www.armscontrol.org/factsheets/nucleartesttally. 
+
+This data can also be found on Bastian Herre’s Github:
+https://github.com/owid/notebooks/tree/main/BastianHerre/nuclear_weapons/Arms%20Control%20Association%20(2020)%20nuclear%20weapons%20tests
+
+
+## Packages
+
+To make my visualization i need to install and use the library *tidyverse* and *ggplot2*.
+```{r}
+library(tidyverse)
+library(ggplot2)
+```
+
+## Data
+
+Next I read and view my data.
+```{r}
+Nuclear_Weapons_Countries <- read.csv("data/country-position-nuclear-weapons.csv")
+View(Nuclear_Weapons_Countries) # Checking the data
+
+Nuclear_Weapons_Tests <- read.csv("data/number-of-nuclear-weapons-tests.csv")
+View(Nuclear_Weapons_Tests) # Checking the data
+```
+
+## Inspect data
+```{r}
+head(Nuclear_Weapons_Countries)
+head(Nuclear_Weapons_Tests)
+```
+
+The data looks good for my purpose.
+
+
+# Visulazation of Nuclear weapons over time
+
+I will research which countries had nuclear weapons before the Cold War, during the Cold War and in the present. This way I can compare the development of nuclear weapons and how it has spread. Who has been and who is in possession of nuclear weapons? And what can be concluded from this?
+
+The study of *nuclear weapons status* should be used to compare with the *testing of nuclear weapons*. This is to see if there is a correlation.
+
+# Countries with Nuclear Weapons (1945)
+
+### Load data
+```{r}
+Nuclear_Weapons_Countries <- read.csv("data/country-position-nuclear-weapons.csv")
+```
+
+### Filter the data 
+
+Here I filter my data so I can get a view on the year 1945.
+
+```{r}
+Nuclear_Weapons_1945 <- read.csv("data/country-position-nuclear-weapons.csv") %>%
+  filter(Year == 1945)
+```
+
+### Create a visualization
+
+I use ggplot to create a visualization with the data sorted to the year 1945, using geom_col to get the lines and adding labels and title.
+```{r}
+ggplot(data = Nuclear_Weapons_1945, aes(x = Entity, y = nuclear_weapons_status)) +
+  geom_col() +
+  labs(title = "Nuclear Weapons Status in 1945", x = "Country", y = "Nuclear Weapons Status") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
+```
+
+This plot is a little confusing with so many countries with most of them with a score of 0, so I will look at the top 20 countries depending on the highest score and below. I will be looking at the countries scoring the number of 1, 2 or 3 in the year 1945, 1975 and 2020 below.
+
+### Sorting the data by "Nuclear Weapons Status" in descending order
+
+Sorted_data1 is arranged so the highest score comes first.
+```{r}
+sorted_data1 <- Nuclear_Weapons_1945 %>%
+  arrange(desc(nuclear_weapons_status))
+```
+
+
+### Selecting the top 20 countries with the highest "Nuclear Weapons Status" scores
+
+I select the 20 countries with the highest scores using my sorted data.
+```{r}
+top_20_countries1945 <- head(sorted_data1, 20)
+```
+
+
+### Creating a plot for the 20 countries with highest nuclear weapons score
+
+I use ggplot to make a visualization. I use geom_bar to make it with bar and making in the colour of skyblue. Adding labels and title with labs.
+```{r}
+ggplot(data = top_20_countries1945, aes(x = reorder(Entity, -nuclear_weapons_status), y = nuclear_weapons_status)) +
+  geom_bar(stat = "identity", fill = "skyblue") +
+  labs(title = "Top 20 Countries with the Highest Nuclear Weapons Status (1945)",
+       x = "Country",
+       y = "Nuclear Weapons Status") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+In this visualization USA is the only country with nuclear weapons. The Soviet Union (Russia) and Great Britain wants to pursuit, France, Germany, Japan and Switzerland is considering in 1945.
+
+The visualization I have created for the year 1945, I will create again for the year 1975 and 2020 below.
+
+# Countries with Nuclear Weapons during the Cold War (1975)
+
+### Load data
+```{r}
+Nuclear_Weapons_Countries <- read.csv("data/country-position-nuclear-weapons.csv")
+```
+
+### Filter the data 
+```{r}
+Nuclear_Weapons_1975 <- read.csv("data/country-position-nuclear-weapons.csv") %>%
+  filter(Year == 1975)
+```
+
+### Create a visualization
+```{r}
+ggplot(data = Nuclear_Weapons_1975, aes(x = Entity, y = nuclear_weapons_status)) +
+  geom_col() +
+  labs(title = "Nuclear Weapons Status in 1975", x = "Country", y = "Nuclear Weapons Status") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
+
+```
+
+There is a significant difference from the visualization from 1945 to the visualization in 1975. This is also more clear in the top 20 countries I will investigate below.
+
+
+### Sorting the data by "Nuclear Weapons Status" in descending order
+```{r}
+sorted_data2 <- Nuclear_Weapons_1975 %>%
+  arrange(desc(nuclear_weapons_status))
+```
+
+### Selecting the top 20 countries with the highest "Nuclear Weapons Status" scores
+```{r}
+top_20_countries1975 <- head(sorted_data2, 20)
+```
+
+### Creating a visualization for the 20 countries with highest nuclear weapons
+```{r}
+ggplot(data = top_20_countries1975, aes(x = reorder(Entity, -nuclear_weapons_status), y = nuclear_weapons_status)) +
+  geom_bar(stat = "identity", fill = "skyblue") +
+  labs(title = "Top 20 Countries with the Highest Nuclear Weapons Status (1975)",
+       x = "Country",
+       y = "Nuclear Weapons Status") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+```
+
+This visualization shows that many more countries were considering, pursuing, or possessing nuclear weapons. The United States no longer had a monopoly on nuclear weapons. The Soviet Union (Russia), Britain, China, France, and Israel now also possessed nuclear weapons.
+
+# Countries with Nuclear Weapons in the present (2020)
+
+The next year I will Inspect is 2020. I am doing the same as above.
+
+### Load data
+```{r}
+Nuclear_Weapons_Countries <- read.csv("data/country-position-nuclear-weapons.csv")
+```
+
+### Filter the data 
+```{r}
+Nuclear_Weapons_2020 <- read.csv("data/country-position-nuclear-weapons.csv") %>%
+  filter(Year == 2020)
+```
+
+### Create a visualization
+```{r}
+ggplot(data = Nuclear_Weapons_2020, aes(x = Entity, y = nuclear_weapons_status)) +
+  geom_col() +
+  labs(title = "Nuclear Weapons Status in 2020", x = "Country", y = "Nuclear Weapons Status") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
+```
+
+This visualization shows that more countries are possessing nuclear weapons in 2020 than in 1945 and 1975. Pakistan, North Korea, and India are now also possessing them. The difference is that most countries are no longer considering or pursuing nuclear weapons. This is more clear in the top 20 countries created below.
+
+### Sorting the data by "Nuclear Weapons Status" in descending order
+```{r}
+sorted_data3 <- Nuclear_Weapons_2020 %>%
+  arrange(desc(nuclear_weapons_status))
+```
+### Selecting the top 20 countries with the highest "Nuclear Weapons Status" scores
+```{r}
+top_20_countries2020 <- head(sorted_data3, 20)
+```
+
+### Creating a visualization for the 20 countries with highest nuclear weapons score
+```{r}
+ggplot(data = top_20_countries2020, aes(x = reorder(Entity, -nuclear_weapons_status), y = nuclear_weapons_status)) +
+  geom_bar(stat = "identity", fill = "skyblue") +
+  labs(title = "Top 20 Countries with the Highest Nuclear Weapons Status (2020)",
+       x = "Country",
+       y = "Nuclear Weapons Status") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+As described above more countries posses nuclear weapons in 2020, but not as many as in 1945 and 1975 are now pursuing or considering possesing nuclear weapons.
+
+# Conclusion of nuclear weapons proliferation:
+
+There has been an evolution over time. The US has gone from having a monopoly on nuclear weapons in 1945 to more countries possessing them in 2020. The desire to possess nuclear weapons has decreased from 1975 to 2020, which probably indicates a disarmament and détente after the end of the Cold War, which partially ended with the fall of the Berlin Wall in 1989 and finally with the collapse of the Soviet Union in 1991.
+
+# Nuclear weapons testing over time
+
+Something else I wanted to look into is the testing of Nuclear Weapons, to see if there is a correlation with nuclear weapons status. 
+
+
+## Load data
+
+I begin with reading and inspecting the data.
+```{r}
+Nuclear_Weapons_Tests <- read.csv("data/number-of-nuclear-weapons-tests.csv")
+
+head(Nuclear_Weapons_Tests)
+```
+
+
+# Creating visualization Nuclear Weapons Tests Over Time
+
+Next, I create a visualization showing testing of nuclear weapons over time from 1945 until 2019.
+```{r}
+ggplot(data = Nuclear_Weapons_Tests, aes(x = Year, y = nuclear_weapons_tests)) +
+  geom_col() +
+  labs(title = "Nuclear Weapons Tests Over Time", x = "Year", y = "Nuclear Weapons Tests") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
+```
+
+This visualisation shows that during the Cold War there was alot of testing with Nuclear Weapons. After the Cold War testing has not been so frequent.
+
+I would like to find out which countries tested the most. To do that I switch out the variable 'Year' with 'Enity'.
+
+# Creating visualization Nuclear Weapons Tests: Countries testing over time
+
+```{r}
+ggplot(data = Nuclear_Weapons_Tests, aes(x = Entity, y = nuclear_weapons_tests, color = Entity)) +
+  geom_line() +
+  labs(title = "Nuclear Weapons Tests Countries (1945 - 2019)", x = "Country", y = "Nuclear Weapons Tests") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
+```
+
+This visualisation shows that the United States and Russia was the two countries who tested the most over time. Now i would like to see this visualiztion, but only in the year of 1975 - in the middle of The Cold War.
+
+# Testing Countries in 1975
+
+## Filter the data
+
+Filtering the data to get the data only from the year 1975.
+```{r}
+Nuclear_Weapons_Tests1975 <- read.csv("data/number-of-nuclear-weapons-tests.csv") %>%
+  filter(Year == 1975)
+```
+
+## Creating visualization testing in 1975
+```{r}
+ggplot(data = Nuclear_Weapons_Tests1975, aes(x = Entity, y = nuclear_weapons_tests, color = Entity)) +
+  geom_col() +
+  labs(title = "Nuclear Weapons Tests Countries (1975)", x = "Country", y = "Nuclear Weapons Tests") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
+```
+
+
+The two superpowers during the Cold War, The Soviet Union (Russia) and USA, are the two countries testing the most in 1975. Im a little curious about which countries tested in 2010 after The Cold War. The next visualization will show this. Then I can compare it with the one from 1975.
+
+# Testing Countries in 2010
+
+## Filter the data 
+
+Filtering to get the data only from 2010.
+```{r}
+Nuclear_Weapons_Tests2010 <- read.csv("data/number-of-nuclear-weapons-tests.csv") %>%
+  filter(Year == 2010)
+```
+
+## Creating plot testing in 2010
+```{r}
+ggplot(data = Nuclear_Weapons_Tests2010, aes(x = Entity, y = nuclear_weapons_tests, color = Entity)) +
+  geom_col() +
+  labs(title = "Nuclear Weapons Tests Countries (2010)", x = "Country", y = "Nuclear Weapons Tests") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
+```
+
+
+This is interesting. North Korea is the only country testing in 2010. The two superpowers, Russia and USA, is no longer during tests. This visualization shows some of the consequences of nuclear weapons. Nuclear weapons are spreading to other countries after the Cold War. Other countries stopped testing nuclear weapons after the Cold War during deténte and disarmament. But why is North Korea testing in 2010, and what are their intentions? I will not be researching this in this project.
+
+# Nuclear Weapon Testing with plotly
+
+I wanted to make my visuliazation more detailed and make it easier to see countries numbers of tests in a specific year. So I combined what I did in the visualizations above. I have used *plotly* to make a more detailed visuliazation, which can combine my visualization from above. This makes it easier for researching. The countries is colored and when you put the mouse on the little markers/dots you can see how many times that a specific country tested in a specific year.
+
+
+## Packages
+
+To create a visualization I need to install and load packages. I used *plotly* and *dplyr*.
+```{r}
+library(plotly)
+library(dplyr)
+```
+
+## Load data
+
+I begin with loading the data and giving it a new name.
+```{r}
+Nuclear_Weapons_Tests_Plotly <- read.csv("data/number-of-nuclear-weapons-tests.csv")
+```
+
+## Creating an interactive line visualization
+
+Next, I create a plotly visualization giving and naming the x and y axises, giving it color, type and mode.
+```{r}
+plotly_Nuclear_Weapons <- Nuclear_Weapons_Tests_Plotly %>%
+  plot_ly(x = ~Year, y = ~nuclear_weapons_tests, color = ~Entity, type = 'scatter', mode = 'lines+markers')
+```
+
+## Setting the title and axis labels
+
+Giving my visualization labels and title.
+```{r}
+ plotly_Nuclear_Weapons%>%
+  layout(title = "Nuclear Weapons Tests Over Time") %>%
+  layout(xaxis = list(title = "Year")) %>%
+  layout(yaxis = list(title = "Nuclear Weapons Tests"))
+```
+
+## Showing the interactive visualisation
+
+This is my result.
+```{r}
+plotly_Nuclear_Weapons
+```
+
+# Conclusion on Nuclear Weapons Testing
+
+Nuclear weapons were developed in the mid-19th century. The United States was the first to possess nuclear weapons. However, several countries followed in their footsteps. In my project it is clear there is a significant development from 1945 to 2020 in the proliferation of nuclear weapons. My results show an interest in developing and testing nuclear weapons throughout the Cold War. After the collapse of the Soviet Union in 1991 it is clear from my research that testing and the desire to possess nuclear weapons has decreased. However, there are still more countries that possess nuclear weapons today. Disarmament and political efforts to reduce the threat of nuclear weapons are clearly visible in the visualizations. However, this does not mean that the threat of nuclear weapons today is not as great as during the Cold War.
