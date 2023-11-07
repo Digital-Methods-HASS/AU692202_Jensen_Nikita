@@ -35,4 +35,4 @@ You need to install the packages tidyverse, ggplot2 and plotly in RStudio.
 
 All visualizations, data, and code produced by Our World in Data are completely open access under the Creative Commons BY license (Link: https://creativecommons.org/licenses/by/4.0/). You have the permission to use, distribute, and reproduce these in any medium, provided the source and authors are credited. (This is described at the bottom of https://ourworldindata.org/nuclear-weapons)
 
-My project is licensend under the ...
+My project is licensend under the Creative Commons Zero v1.0 Universal.
