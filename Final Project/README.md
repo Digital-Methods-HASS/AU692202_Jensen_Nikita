@@ -9,13 +9,13 @@ This project is based on the data sources provided by [OurWorldInData project]: 
 
 Cited: Max Roser, Bastian Herre and Joe Hasell (2013) - "Nuclear Weapons". Published online at OurWorldInData.org. Retrieved from: 'https://ourworldindata.org/nuclear-weapons' [Online Resource].
 
-## 1.1. Nuclear Weapons Status data:
+### 1.1. Nuclear Weapons Status data:
 I have used a data source (Nuclear Weapons Status) from Our World in Data to research the proliferation of nuclear weapons. (fodnote) Here is a more specific link to where I found it: https://ourworldindata.org/nuclear-weapons#nuclear-powers-and-proliferation. See this for more information about the data on nuclear weapon proliferation. The information includes that the data source is based on Bleek (2017) and Nuclear Threat Initiative (2022). Under sources it is described that the data is published by Our World in Data, Bastian Herre. 
 
 Link to Bastians Herre’s Github:
 https://github.com/owid/notebooks/tree/main/BastianHerre/nuclear_weapons/OWID%20based%20on%20Bleek%20(2017)%2C%20Nuclear%20Threat%20Initiative%20(2022)%20nuclear%20weapons%20proliferation
 
-## 1.2. Nuclear Weapons Testing data:
+### 1.2. Nuclear Weapons Testing data:
 The other data source (Nuclear Weapons Testing) used in this study is also provided by Our World In Data: https://ourworldindata.org/nuclear-weapons#nuclear-weapons-tests. This link provides more information specified about the data. This data source provides the number of nuclear weapons testing by country. The data is published by Arms Control Association. Here is a more specific link: https://www.armscontrol.org/factsheets/nucleartesttally. 
 
 This data can also be found on Bastian Herre’s Github:
